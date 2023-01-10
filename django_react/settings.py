@@ -137,5 +137,8 @@ SESSION_COOKIE_HTTPONLY = True
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+       'rest_framework.permissions.DjangoModelPermissions',
     ]
 }
