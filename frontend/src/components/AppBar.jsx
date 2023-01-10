@@ -14,11 +14,9 @@ import MenuItem from '@mui/material/MenuItem';
 import StorageTwoToneIcon from '@mui/icons-material/StorageTwoTone';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import LoginDialog from './LoginDialog';
 
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
-
-function ResponsiveAppBar({darkMode, onChangeTheme}) {
+function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onChangeTheme}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -37,10 +35,16 @@ function ResponsiveAppBar({darkMode, onChangeTheme}) {
     setAnchorElUser(null);
   };
 
+  const doLogout = () => {
+    setAnchorElUser(null);
+    handleLogout();
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          {/* Desktop title */}
           <StorageTwoToneIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
@@ -57,10 +61,11 @@ function ResponsiveAppBar({darkMode, onChangeTheme}) {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            Leads App
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            {/* Hamburger button */}
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -71,6 +76,8 @@ function ResponsiveAppBar({darkMode, onChangeTheme}) {
             >
               <MenuIcon />
             </IconButton>
+
+            {/* Mobile menu */}
             <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
@@ -89,13 +96,13 @@ function ResponsiveAppBar({darkMode, onChangeTheme}) {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem key="home" onClick={handleCloseNavMenu}>
+                <Typography textAlign="center">Home</Typography>
+              </MenuItem>
             </Menu>
           </Box>
+
+          {/* Mobile title */}
           <StorageTwoToneIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
@@ -113,24 +120,25 @@ function ResponsiveAppBar({darkMode, onChangeTheme}) {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            Leads App
           </Typography>
+
+          {/* Desktop menu */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
+            <Button
+              key="home"
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Home
+            </Button>
           </Box>
 
+          {/* User icon & menu */}
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="User Options">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Dave Page" src="/static/images/avatar/2.jpg" />
+                <Avatar {...appState.avatarProps} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -149,14 +157,19 @@ function ResponsiveAppBar({darkMode, onChangeTheme}) {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+              {/* Login/Logout */}
+              {!appState.isAuthenticated ?
+                <LoginDialog appState={appState} handleLogin={handleLogin} clearError={clearError} setAnchorElUser={setAnchorElUser} />
+              :
+                <MenuItem key="logout" onClick={doLogout}>
+                  <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
-              ))}
+              }
             </Menu>
+
+            {/* Darkmode toggler */}
             <IconButton sx={{ ml: 1 }} onClick={onChangeTheme}>
-              {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+              {appState.darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
           </Box>
         </Toolbar>

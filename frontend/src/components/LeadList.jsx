@@ -6,6 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Alert from "@mui/material/Alert";
 
 
 class LeadList extends Component {
@@ -13,8 +14,7 @@ class LeadList extends Component {
     super(props);
     this.state = {
       data: [],
-      loaded: false,
-      placeholder: "Loading"
+      error: ''
     };
   }
 
@@ -27,7 +27,7 @@ class LeadList extends Component {
       .then(response => {
         if (response.status > 400) {
           return this.setState(() => {
-            return { placeholder: "Something went wrong!" };
+            return { error: 'Request status: ' + response.status + ' - ' + response.statusText };
           });
         }
         return response.json();
@@ -35,8 +35,7 @@ class LeadList extends Component {
       .then(data => {
         this.setState(() => {
           return {
-            data,
-            loaded: true
+            data
           };
         });
       });
@@ -44,31 +43,37 @@ class LeadList extends Component {
 
   render() {
     return (
-      <TableContainer component={Paper}>
-        <Table size="small" aria-label="Lead List">
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Message</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {this.state.data.map((contact) => (
-              <TableRow
-                key={contact.name}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {contact.name}
-                </TableCell>
-                <TableCell>{contact.email}</TableCell>
-                <TableCell>{contact.message}</TableCell>
+      <>
+      {this.state.error == '' ?
+        <TableContainer component={Paper}>
+          <Table size="small" aria-label="Lead List">
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Message</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {this.state.data.map((contact) => (
+                <TableRow
+                  key={contact.name}
+                  sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                >
+                  <TableCell component="th" scope="row">
+                    {contact.name}
+                  </TableCell>
+                  <TableCell>{contact.email}</TableCell>
+                  <TableCell>{contact.message}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      :
+        <Alert severity="error">{this.state.error}</Alert>
+      }
+      </>
     );
   }
 }
