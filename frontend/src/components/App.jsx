@@ -121,14 +121,6 @@ class App extends React.Component {
     });
   }
 
-  handlePasswordChange = (event) => {
-    this.setState({password: event.target.value});
-  }
-
-  handleUserNameChange = (event) => {
-    this.setState({username: event.target.value});
-  }
-
   isResponseOk(response) {
     if (response.status >= 200 && response.status <= 299) {
       return response.json();
@@ -153,7 +145,6 @@ class App extends React.Component {
     })
     .then(this.isResponseOk)
     .then((data) => {
-      console.log(data);
       this.getSession();
     })
     .catch((err) => {
