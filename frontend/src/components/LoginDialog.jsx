@@ -17,22 +17,35 @@ import Alert from '@mui/material/Alert';
 
 export default function LoginDialog(props) {
   const [open, setOpen] = React.useState(false);
+  const [username, setUsername] = React.useState(props?.value ?? '');
+  const [password, setPassword] = React.useState(props?.value ?? '');
 
   // Respond to the open dialog event
   const handleOpen = () => {
+    // Close the calling menu
     props.setAnchorElUser(null);
+
+    setUsername('');
+    setPassword('');
+    props.clearError();
+
     setOpen(true);
   };
 
     // Respond to the open dialog event
   const handleLogout = () => {
+    // Close the calling menu
     props.setAnchorElUser(null);
+
     props.handleLogout();
   };
 
   // Close the dialog
   const handleClose = () => {
+    setUsername('');
+    setPassword('');
     props.clearError();
+
     setOpen(false);
   };
 
@@ -43,18 +56,10 @@ export default function LoginDialog(props) {
     event.preventDefault();
   };
 
-  // Handle a login attempt
-  const [username, setUsername] = React.useState(props?.value ?? '');
-  const [password, setPassword] = React.useState(props?.value ?? '');
-
+  // Attempt a login
   const login = (event) => {
     event.preventDefault();
-    props.handleLogin(username, password);
-
-    if (!props.appState.isAuthenticated) {
-      return;
-    }
-    setOpen(false);
+    props.handleLogin(username, password, handleClose);
   }
 
   return (

@@ -133,7 +133,7 @@ class App extends React.Component {
     this.setState({error: ''});
   }
 
-  login(username, password) {
+  login(username, password, cbSuccess) {
     fetch("/api/login/", {
       method: "POST",
       headers: {
@@ -146,6 +146,7 @@ class App extends React.Component {
     .then(this.isResponseOk)
     .then((data) => {
       this.getSession();
+      cbSuccess();
     })
     .catch((err) => {
       console.log(err);

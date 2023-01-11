@@ -15,7 +15,6 @@ Don't expect the code to do anything particularly useful!
 
 ## TODO
 
-* Fix async issue when closing the login dialogue
 * Remove login dialogue from menu item to fix tab navigation
 * Move to using a separate context for user state
 * Move authentication code out of App.jsx.
