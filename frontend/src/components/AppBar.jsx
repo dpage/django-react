@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -19,6 +20,7 @@ import LoginDialog from './LoginDialog';
 function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onChangeTheme}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -35,135 +37,151 @@ function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onCh
     setAnchorElUser(null);
   };
 
+  const onLogin = () => {
+    setAnchorElUser(null);
+    setShowLoginDialog(true);
+  }
+
+  const onLogout = () => {
+    setAnchorElUser(null);
+    handleLogout();
+  };
+
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          {/* Desktop title */}
-          <StorageTwoToneIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Leads App
-          </Typography>
-
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            {/* Hamburger button */}
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-
-            {/* Mobile menu */}
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
+    <>
+      <AppBar position="static">
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            {/* Desktop title */}
+            <StorageTwoToneIcon sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}/>
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              href="/"
               sx={{
-                display: { xs: 'block', md: 'none' },
+                mr: 2,
+                display: {xs: 'none', md: 'flex'},
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
               }}
             >
-              <MenuItem key="home" onClick={handleCloseNavMenu}>
-                <Typography textAlign="center">Home</Typography>
-              </MenuItem>
-            </Menu>
-          </Box>
+              Leads App
+            </Typography>
 
-          {/* Mobile title */}
-          <StorageTwoToneIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Leads App
-          </Typography>
-
-          {/* Desktop menu */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <Button
-              key="home"
-              onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: 'white', display: 'block' }}
-            >
-              Home
-            </Button>
-          </Box>
-
-          {/* User icon & menu */}
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="User Options">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar {...appState.avatarProps} />
+            <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
+              {/* Hamburger button */}
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenNavMenu}
+                color="inherit"
+              >
+                <MenuIcon/>
               </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {/* Login/Logout */}
-              <LoginDialog appState={appState} handleLogin={handleLogin} handleLogout={handleLogout} clearError={clearError} setAnchorElUser={setAnchorElUser} />
-            </Menu>
 
-            {/* Darkmode toggler */}
-            <IconButton sx={{ ml: 1 }} onClick={onChangeTheme}>
-              {appState.darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+              {/* Mobile menu */}
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+                sx={{
+                  display: {xs: 'block', md: 'none'},
+                }}
+              >
+                <MenuItem key="home" onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">Home</Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
+
+            {/* Mobile title */}
+            <StorageTwoToneIcon sx={{display: {xs: 'flex', md: 'none'}, mr: 1}}/>
+            <Typography
+              variant="h5"
+              noWrap
+              component="a"
+              href=""
+              sx={{
+                mr: 2,
+                display: {xs: 'flex', md: 'none'},
+                flexGrow: 1,
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              Leads App
+            </Typography>
+
+            {/* Desktop menu */}
+            <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
+              <Button
+                key="home"
+                onClick={handleCloseNavMenu}
+                sx={{my: 2, color: 'white', display: 'block'}}
+              >
+                Home
+              </Button>
+            </Box>
+
+            {/* User icon & menu */}
+            <Box sx={{flexGrow: 0}}>
+              <Tooltip title="User Options">
+                <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
+                  <Avatar {...appState.avatarProps} />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{mt: '45px'}}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {/* Login/Logout */}
+                <MenuItem disabled={appState.isAuthenticated} aria-label='login' onClick={onLogin}>Login</MenuItem>
+                <MenuItem disabled={!appState.isAuthenticated} aria-label='logout' onClick={onLogout}>Logout</MenuItem>
+              </Menu>
+
+              {/* Darkmode toggler */}
+              <IconButton sx={{ml: 1}} onClick={onChangeTheme}>
+                {appState.darkMode ? <Brightness7Icon/> : <Brightness4Icon/>}
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+      {showLoginDialog && (
+        <LoginDialog appState={appState} open={showLoginDialog} handleLogin={handleLogin} clearError={clearError}
+                     setAnchorElUser={setAnchorElUser} setShowLoginDialog={() => setShowLoginDialog(false)}/>)}
+    </>
   );
 }
 
