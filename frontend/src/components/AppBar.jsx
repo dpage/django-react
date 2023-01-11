@@ -35,11 +35,6 @@ function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onCh
     setAnchorElUser(null);
   };
 
-  const doLogout = () => {
-    setAnchorElUser(null);
-    handleLogout();
-  };
-
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -158,13 +153,7 @@ function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onCh
               onClose={handleCloseUserMenu}
             >
               {/* Login/Logout */}
-              {!appState.isAuthenticated ?
-                <LoginDialog appState={appState} handleLogin={handleLogin} clearError={clearError} setAnchorElUser={setAnchorElUser} />
-              :
-                <MenuItem key="logout" aria-label='logout' onClick={doLogout}>
-                  <Typography textAlign="center">Logout</Typography>
-                </MenuItem>
-              }
+              <LoginDialog appState={appState} handleLogin={handleLogin} handleLogout={handleLogout} clearError={clearError} setAnchorElUser={setAnchorElUser} />
             </Menu>
 
             {/* Darkmode toggler */}
