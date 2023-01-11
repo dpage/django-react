@@ -64,8 +64,10 @@ export default function LoginDialog(props) {
             <TextField
               id="username"
               label="Username"
+              aria-label="username"
               margin="dense"
               fullWidth
+              autoFocus
               required={true}
               error={props.appState.error != ''}
               InputProps={{
@@ -81,6 +83,7 @@ export default function LoginDialog(props) {
             <TextField
               id="password"
               label="Password"
+              aria-label="password"
               margin="dense"
               fullWidth
               required={true}
