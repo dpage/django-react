@@ -161,7 +161,7 @@ function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onCh
               {!appState.isAuthenticated ?
                 <LoginDialog appState={appState} handleLogin={handleLogin} clearError={clearError} setAnchorElUser={setAnchorElUser} />
               :
-                <MenuItem key="logout" onClick={doLogout}>
+                <MenuItem key="logout" aria-label='logout' onClick={doLogout}>
                   <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
               }

@@ -50,8 +50,8 @@ export default function LoginDialog(props) {
   }
 
   return (
-    <div>
-      <MenuItem onClick={handleOpen}>Login</MenuItem>
+    <>
+      <MenuItem aria-label='login' onClick={handleOpen}>Login</MenuItem>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Login</DialogTitle>
         <DialogContent>
@@ -106,10 +106,10 @@ export default function LoginDialog(props) {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button disabled={username == '' || password == ''} onClick={login}>Login</Button>
+          <Button aria-label='cancel' onClick={handleClose}>Cancel</Button>
+          <Button aria-label='login' disabled={username == '' || password == ''} onClick={login}>Login</Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 }
