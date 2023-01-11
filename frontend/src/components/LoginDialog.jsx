@@ -24,6 +24,12 @@ export default function LoginDialog(props) {
     setOpen(true);
   };
 
+    // Respond to the open dialog event
+  const handleLogout = () => {
+    props.setAnchorElUser(null);
+    props.handleLogout();
+  };
+
   // Close the dialog
   const handleClose = () => {
     props.clearError();
@@ -43,7 +49,9 @@ export default function LoginDialog(props) {
 
   const login = (event) => {
     event.preventDefault();
-    if (!props.handleLogin(username, password)) {
+    props.handleLogin(username, password);
+
+    if (!props.appState.isAuthenticated) {
       return;
     }
     setOpen(false);
@@ -51,7 +59,11 @@ export default function LoginDialog(props) {
 
   return (
     <>
-      <MenuItem aria-label='login' onClick={handleOpen}>Login</MenuItem>
+      {!props.appState.isAuthenticated ?
+        <MenuItem aria-label='login' onClick={handleOpen}>Login</MenuItem>
+        :
+        <MenuItem aria-label='logout' onClick={handleLogout}>Logout</MenuItem>
+      }
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Login</DialogTitle>
         <DialogContent>
