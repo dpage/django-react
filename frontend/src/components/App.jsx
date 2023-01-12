@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {useEffect, useState} from "react";
 import {render} from 'react-dom';
 import ButtonAppBar from './AppBar';
 import LeadList from './LeadList';
@@ -8,6 +8,8 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Cookies from "universal-cookie";
+import {stringAvatar} from "../utils";
+import {AppContext} from "./AppContext";
 
 const cookies = new Cookies();
 
@@ -23,105 +25,60 @@ const lightTheme = createTheme({
   },
 });
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
 
-    this.login = this.login.bind(this);
-    this.clearError = this.clearError.bind(this);
+// Figure out the default dark mode.
+let osDark = false;
+let defaultDark = false;
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  osDark = true;
+}
+defaultDark = JSON.parse(localStorage.getItem('darkMode')) ?? osDark;
 
-    let defaultDark = false;
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      defaultDark = true;
-    }
 
-    let darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? defaultDark;
+export function App() {
+  const anonUser = {
+    username: '',
+    fullname: 'Anonymous User',
+    avatarProps: stringAvatar('Anonymous User'),
+    email: '',
+    password: '',
+    isAuthenticated: false
+  };
 
-    this.state = {
-      username: "",
-      fullname: "Anonymous User",
-      avatarProps: this.stringAvatar('Anonymous User'),
-      email: "",
-      password: "",
-      error: "",
-      isAuthenticated: false,
-      darkMode: darkMode,
-    };
-  }
+  const [user, setUser] = useState(anonUser);
+  const [darkMode, setDarkMode] = useState(defaultDark);
+  const [error, setError] = useState("");
 
-  stringToColor(string) {
-    let hash = 0;
-    let i;
-
-    /* eslint-disable no-bitwise */
-    for (i = 0; i < string.length; i += 1) {
-      hash = string.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    let color = '#';
-
-    for (i = 0; i < 3; i += 1) {
-      const value = (hash >> (i * 8)) & 0xff;
-      color += `00${value.toString(16)}`.slice(-2);
-    }
-    /* eslint-enable no-bitwise */
-
-    return color;
-  }
-
-  stringAvatar(name) {
-    let children = '';
-    if (!name.includes(' ')) {
-      children = name[0].toUpperCase();
-    } else {
-      children = name.split(' ')[0][0].toUpperCase() + name.split(' ')[1][0].toUpperCase();
-    }
-
-    return {
-      sx: {
-        bgcolor: this.stringToColor(name),
-      },
-      children: children,
-    };
-  }
-
-  componentDidMount = () => {
-    this.getSession();
-  }
-
-  getSession = () => {
+  // Retrieve any session details, or clear them if necessary
+  const getSession = () => {
     fetch("/api/session/", {
       credentials: "same-origin",
     })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      if (data.isAuthenticated) {
-        this.setState({
-          isAuthenticated: true,
-          username: data.username,
-          fullname: data.fullname,
-          avatarProps: this.stringAvatar(data.fullname),
-          email: data.email,
-          error: ''
-        });
-      } else {
-        this.setState({
-          isAuthenticated: false,
-          username: '',
-          fullname: 'Anonymous User',
-          avatarProps: this.stringAvatar('Anonymous User'),
-          email: '',
-          error: ''
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.isAuthenticated) {
+          setUser({
+            username: data.username,
+            fullname: data.fullname,
+            avatarProps: stringAvatar(data.fullname),
+            email: data.email,
+            password: '',
+            isAuthenticated: true
+          });
+          setError('');
+        } else {
+          setUser(anonUser);
+          setError('');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
-  isResponseOk(response) {
+  // Did we get a good response from our request?
+  const isResponseOk = (response) => {
     if (response.status >= 200 && response.status <= 299) {
       return response.json();
     } else {
@@ -129,92 +86,81 @@ class App extends React.Component {
     }
   }
 
-  clearError() {
-    this.setState({error: ''});
+  // Clear any previous errors
+  const clearError = () => {
+    setError('');
   }
 
-  login(username, password, cbSuccess) {
+  // Attempt to login
+  const login = (username, password, cbSuccess) => {
     fetch("/api/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": cookies.get("csrftoken"),
-      },
-      credentials: "same-origin",
-      body: JSON.stringify({username: username, password: password}),
+      method: "POST", headers: {
+        "Content-Type": "application/json", "X-CSRFToken": cookies.get("csrftoken"),
+      }, credentials: "same-origin", body: JSON.stringify({username: username, password: password}),
     })
-    .then(this.isResponseOk)
-    .then((data) => {
-      this.getSession();
-      cbSuccess();
-    })
-    .catch((err) => {
-      console.log(err);
-      this.setState({error: "Incorrect username or password."});
-    });
+      .then(isResponseOk)
+      .then(() => {
+        getSession();
+        cbSuccess();
+      })
+      .catch((err) => {
+        console.log(err);
+        setError('Incorrect username or password.');
+      });
   }
 
-  logout = () => {
+  // Clear the session out
+  const logout = () => {
     fetch("/api/logout", {
       credentials: "same-origin",
     })
-    .then(this.isResponseOk)
-    .then((data) => {
-      console.log(data);
-      this.setState({
-        isAuthenticated: false,
-        username: '',
-        fullname: 'Anonymous User',
-        avatarProps: this.stringAvatar('Anonymous User'),
-        email: '',
-        error: ''
+      .then(isResponseOk)
+      .then((data) => {
+        console.log(data);
+        setUser(anonUser);
+        setError('');
+      })
+      .catch((err) => {
+        console.log(err);
       });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
   };
 
-
-  changeTheme = () => {
-    const darkMode = this.state.darkMode;
-    this.setState({darkMode: !darkMode});
+  // Toggle the theme
+  const changeTheme = () => {
     localStorage.setItem('darkMode', JSON.stringify(!darkMode));
+    setDarkMode(!darkMode);
   }
 
-  render() {
-    return (
-      <ThemeProvider theme={this.state.darkMode ? darkTheme : lightTheme}>
+  // See if we can get session data
+  useEffect(() => {
+    getSession()
+  }, []);
+
+  return (<AppContext.Provider value={{user, darkMode, error}}>
+      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
         <CssBaseline/>
-        <ButtonAppBar appState={this.state} handleLogin={this.login} handleLogout={this.logout} clearError={this.clearError} onChangeTheme={this.changeTheme} />
+        <ButtonAppBar appState={user} handleLogin={login} handleLogout={logout} clearError={clearError}
+                      onChangeTheme={changeTheme}/>
         <Box align="center" sx={{flexGrow: 1}} style={{marginLeft: 20, marginRight: 20}}>
           <Grid container align="left" maxWidth="xl" spacing={1} wrap="wrap">
-            {!this.state.isAuthenticated ?
+            {!user.isAuthenticated ? <Grid item xs={12}>
+              <h1>Login</h1>
+              <Alert severity="error">Please login to see the lead list.</Alert>
+            </Grid> : <>
               <Grid item xs={12}>
-                <h1>Login</h1>
-                <Alert severity="error">Please login to see the lead list.</Alert>
+                <h1>Lead List</h1>
               </Grid>
-            :
-              <>
-                <Grid item xs={12}>
-                  <h1>Lead List</h1>
-                </Grid>
-                <Grid item xs={12}>
-                  <LeadList/>
-                </Grid>
-              </>
-            }
+              <Grid item xs={12}>
+                <LeadList/>
+              </Grid>
+            </>}
           </Grid>
         </Box>
       </ThemeProvider>
-    )
-  };
+    </AppContext.Provider>)
 }
 
 const container = document.getElementById("app");
-render(
-  <React.StrictMode>
-    <App/>
-  </React.StrictMode>,
-  container
-);
+render(<React.StrictMode>
+  <App/>
+</React.StrictMode>, container);

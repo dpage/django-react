@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,12 +15,15 @@ import MenuItem from '@mui/material/MenuItem';
 import StorageTwoToneIcon from '@mui/icons-material/StorageTwoTone';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import LoginDialog from './LoginDialog';
+import LoginDialog from './Authentication';
+import {AppContext} from "./AppContext";
 
-function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onChangeTheme}) {
+function ResponsiveAppBar({handleLogin, handleLogout, clearError, onChangeTheme}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+
+  const appContext = useContext(AppContext);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -47,8 +50,7 @@ function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onCh
     handleLogout();
   };
 
-  return (
-    <>
+  return (<>
       <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -90,13 +92,11 @@ function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onCh
                 id="menu-appbar"
                 anchorEl={anchorElNav}
                 anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
+                  vertical: 'bottom', horizontal: 'left',
                 }}
                 keepMounted
                 transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
+                  vertical: 'top', horizontal: 'left',
                 }}
                 open={Boolean(anchorElNav)}
                 onClose={handleCloseNavMenu}
@@ -146,7 +146,7 @@ function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onCh
             <Box sx={{flexGrow: 0}}>
               <Tooltip title="User Options">
                 <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                  <Avatar {...appState.avatarProps} />
+                  <Avatar {...appContext.user.avatarProps} />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -154,35 +154,33 @@ function ResponsiveAppBar({appState, handleLogin, handleLogout, clearError, onCh
                 id="menu-appbar"
                 anchorEl={anchorElUser}
                 anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+                  vertical: 'top', horizontal: 'right',
                 }}
                 keepMounted
                 transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+                  vertical: 'top', horizontal: 'right',
                 }}
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
                 {/* Login/Logout */}
-                <MenuItem disabled={appState.isAuthenticated} aria-label='login' onClick={onLogin}>Login</MenuItem>
-                <MenuItem disabled={!appState.isAuthenticated} aria-label='logout' onClick={onLogout}>Logout</MenuItem>
+                <MenuItem disabled={appContext.user.isAuthenticated} aria-label='login'
+                          onClick={onLogin}>Login</MenuItem>
+                <MenuItem disabled={!appContext.user.isAuthenticated} aria-label='logout'
+                          onClick={onLogout}>Logout</MenuItem>
               </Menu>
 
               {/* Darkmode toggler */}
               <IconButton sx={{ml: 1}} onClick={onChangeTheme}>
-                {appState.darkMode ? <Brightness7Icon/> : <Brightness4Icon/>}
+                {appContext.darkMode ? <Brightness7Icon/> : <Brightness4Icon/>}
               </IconButton>
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
-      {showLoginDialog && (
-        <LoginDialog appState={appState} open={showLoginDialog} handleLogin={handleLogin} clearError={clearError}
-                     setAnchorElUser={setAnchorElUser} setShowLoginDialog={() => setShowLoginDialog(false)}/>)}
-    </>
-  );
+      {showLoginDialog && (<LoginDialog open={showLoginDialog} handleLogin={handleLogin} clearError={clearError}
+                                        setShowLoginDialog={setShowLoginDialog} />)}
+    </>);
 }
 
 export default ResponsiveAppBar;

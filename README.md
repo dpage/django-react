@@ -15,5 +15,4 @@ Don't expect the code to do anything particularly useful!
 
 ## TODO
 
-* Move to using a separate context for user state
 * Move authentication code out of App.jsx.
