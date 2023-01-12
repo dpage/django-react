@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useContext, useState} from 'react';
+import {useContext, useRef, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,22 +15,25 @@ import MenuItem from '@mui/material/MenuItem';
 import StorageTwoToneIcon from '@mui/icons-material/StorageTwoTone';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import LoginDialog from './Authentication';
+import {LoginDialog} from './Authentication';
 import {AppContext} from "./AppContext";
 
-function ResponsiveAppBar({handleLogin, handleLogout, clearError, onChangeTheme}) {
+function ResponsiveAppBar({onChangeTheme}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   const appContext = useContext(AppContext);
+  const logoutRef = useRef();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
+
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
@@ -40,17 +43,15 @@ function ResponsiveAppBar({handleLogin, handleLogout, clearError, onChangeTheme}
     setAnchorElUser(null);
   };
 
+
   const onLogin = () => {
     setAnchorElUser(null);
     setShowLoginDialog(true);
   }
 
-  const onLogout = () => {
-    setAnchorElUser(null);
-    handleLogout();
-  };
 
   return (<>
+      <LoginDialog open={showLoginDialog} setShowLoginDialog={setShowLoginDialog} ref={logoutRef} />
       <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -167,7 +168,7 @@ function ResponsiveAppBar({handleLogin, handleLogout, clearError, onChangeTheme}
                 <MenuItem disabled={appContext.user.isAuthenticated} aria-label='login'
                           onClick={onLogin}>Login</MenuItem>
                 <MenuItem disabled={!appContext.user.isAuthenticated} aria-label='logout'
-                          onClick={onLogout}>Logout</MenuItem>
+                          onClick={() => handleCloseUserMenu() & logoutRef.current.handleLogout()}>Logout</MenuItem>
               </Menu>
 
               {/* Darkmode toggler */}
@@ -178,8 +179,6 @@ function ResponsiveAppBar({handleLogin, handleLogout, clearError, onChangeTheme}
           </Toolbar>
         </Container>
       </AppBar>
-      {showLoginDialog && (<LoginDialog open={showLoginDialog} handleLogin={handleLogin} clearError={clearError}
-                                        setShowLoginDialog={setShowLoginDialog} />)}
     </>);
 }
 

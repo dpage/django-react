@@ -15,4 +15,4 @@ Don't expect the code to do anything particularly useful!
 
 ## TODO
 
-* Move authentication code out of App.jsx.
+Huh. I did everything I was planning. And just in time for EDB's Wellness Friday!
