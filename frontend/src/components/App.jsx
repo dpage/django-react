@@ -9,6 +9,8 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import {anonUser} from "./Authentication";
 import {AppContext} from "./AppContext";
+import Welcome from "./Welcome";
+import {Route, Routes, Router, BrowserRouter} from 'react-router-dom';
 
 
 const darkTheme = createTheme({
@@ -50,22 +52,19 @@ export function App() {
     <AppContext.Provider value={{user, darkMode, error, setUser, setError}}>
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
         <CssBaseline/>
-        <ButtonAppBar onChangeTheme={changeTheme}/>
-        <Box align="center" sx={{flexGrow: 1}} style={{marginLeft: 20, marginRight: 20}}>
-          <Grid container align="left" maxWidth="xl" spacing={1} wrap="wrap">
-            {!user.isAuthenticated ? <Grid item xs={12}>
-              <h1>Login</h1>
-              <Alert severity="error">Please login to see the lead list.</Alert>
-            </Grid> : <>
+
+          <ButtonAppBar onChangeTheme={changeTheme}/>
+          <Box align="center" sx={{flexGrow: 1}} style={{marginLeft: 20, marginRight: 20}}>
+            <Grid container align="left" maxWidth="xl" spacing={1} wrap="wrap">
               <Grid item xs={12}>
-                <h1>Lead List</h1>
+                <Routes>
+                  <Route exact path="/" element={<Welcome />} />
+                  <Route exact path="/lead-list" element={<LeadList />} />
+                </Routes>
               </Grid>
-              <Grid item xs={12}>
-                <LeadList/>
-              </Grid>
-            </>}
-          </Grid>
-        </Box>
+            </Grid>
+          </Box>
+
       </ThemeProvider>
     </AppContext.Provider>
   )
@@ -73,5 +72,7 @@ export function App() {
 
 const container = document.getElementById("app");
 render(<React.StrictMode>
+  <BrowserRouter>
   <App/>
+  </BrowserRouter>
 </React.StrictMode>, container);

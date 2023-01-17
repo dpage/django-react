@@ -17,6 +17,8 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import {LoginDialog} from './Authentication';
 import {AppContext} from "./AppContext";
+import {Link as RouterLink} from "react-router-dom";
+import {Link} from "@mui/material";
 
 function ResponsiveAppBar({onChangeTheme}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -106,7 +108,10 @@ function ResponsiveAppBar({onChangeTheme}) {
                 }}
               >
                 <MenuItem key="home" onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">Home</Typography>
+                  <Typography style={{ color: 'inherit', textDecoration: 'inherit'}} textAlign="center" component={RouterLink} to="/">Home</Typography>
+                </MenuItem>
+                <MenuItem key="lead-list" onClick={handleCloseNavMenu}>
+                  <Typography style={{ color: 'inherit', textDecoration: 'inherit'}} color="inherit" textAlign="center" component={RouterLink} to="/lead-list">Lead List</Typography>
                 </MenuItem>
               </Menu>
             </Box>
@@ -135,11 +140,22 @@ function ResponsiveAppBar({onChangeTheme}) {
             {/* Desktop menu */}
             <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
               <Button
+                component={RouterLink}
+                to="/"
                 key="home"
                 onClick={handleCloseNavMenu}
                 sx={{my: 2, color: 'white', display: 'block'}}
               >
                 Home
+              </Button>
+              <Button
+                component={RouterLink}
+                to="/lead-list"
+                key="lead-list"
+                onClick={handleCloseNavMenu}
+                sx={{my: 2, color: 'white', display: 'block'}}
+              >
+                Lead List
               </Button>
             </Box>
 
