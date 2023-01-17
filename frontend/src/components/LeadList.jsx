@@ -46,7 +46,7 @@ function LeadList(props) {
       {!appContext.user.isAuthenticated ?
         <>
           <h1>Login</h1>
-          <Alert severity="error">Please login to see the lead list.</Alert>
+          <Alert variant="outlined" severity="error">Please login to see the lead list.</Alert>
         </>
       :
         <>
@@ -78,7 +78,7 @@ function LeadList(props) {
               </Table>
             </TableContainer>
           :
-            <Alert severity="error">{error}</Alert>
+            <Alert variant="outlined" severity="error">{error}</Alert>
           }
         </>
       }

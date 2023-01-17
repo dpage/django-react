@@ -62,12 +62,11 @@ function ResponsiveAppBar({onChangeTheme}) {
             <Typography
               variant="h6"
               noWrap
-              component="a"
-              href="/"
+              component={RouterLink}
+              to="/"
               sx={{
                 mr: 2,
                 display: {xs: 'none', md: 'flex'},
-                fontFamily: 'monospace',
                 fontWeight: 700,
                 letterSpacing: '.3rem',
                 color: 'inherit',
