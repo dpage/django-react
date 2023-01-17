@@ -3,27 +3,15 @@ import {render} from 'react-dom';
 import ButtonAppBar from './AppBar';
 import LeadList from './LeadList';
 import CssBaseline from '@mui/material/CssBaseline';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
-import Alert from '@mui/material/Alert';
+import {ThemeProvider} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import {anonUser} from "./Authentication";
 import {AppContext} from "./AppContext";
 import Welcome from "./Welcome";
 import {Route, Routes, Router, BrowserRouter} from 'react-router-dom';
-
-
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
-
-const lightTheme = createTheme({
-  palette: {
-    mode: 'light',
-  },
-});
+import {darkTheme} from "./themes/DarkTheme";
+import {lightTheme} from "./themes/LightTheme";
 
 
 // Figure out the default dark mode.
